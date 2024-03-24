@@ -1429,3 +1429,462 @@ root@debian10x64:/home/fernando#
 
 - Grafana acessivel via:
 <http://192.168.0.105:32626/grafana/?orgId=1>
+
+
+
+
+
+
+
+
+
+
+
+
+## Instalação Opentelemetry Operator
+
+- Instalação do CertManager como dependência do operator: 
+
+````bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+
+
+
+root@debian10x64:/home/fernando# kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+namespace/cert-manager created
+customresourcedefinition.apiextensions.k8s.io/clusterissuers.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/challenges.acme.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/certificaterequests.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/issuers.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/certificates.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/orders.acme.cert-manager.io created
+serviceaccount/cert-manager-cainjector created
+serviceaccount/cert-manager created
+serviceaccount/cert-manager-webhook created
+configmap/cert-manager-webhook created
+clusterrole.rbac.authorization.k8s.io/cert-manager-cainjector created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-issuers created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-clusterissuers created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-certificates created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-orders created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-challenges created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-ingress-shim created
+clusterrole.rbac.authorization.k8s.io/cert-manager-view created
+clusterrole.rbac.authorization.k8s.io/cert-manager-edit created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-approve:cert-manager-io created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-certificatesigningrequests created
+clusterrole.rbac.authorization.k8s.io/cert-manager-webhook:subjectaccessreviews created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-cainjector created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-issuers created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-clusterissuers created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-certificates created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-orders created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-challenges created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-ingress-shim created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-approve:cert-manager-io created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-certificatesigningrequests created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-webhook:subjectaccessreviews created
+role.rbac.authorization.k8s.io/cert-manager-cainjector:leaderelection created
+role.rbac.authorization.k8s.io/cert-manager:leaderelection created
+role.rbac.authorization.k8s.io/cert-manager-webhook:dynamic-serving created
+rolebinding.rbac.authorization.k8s.io/cert-manager-cainjector:leaderelection created
+rolebinding.rbac.authorization.k8s.io/cert-manager:leaderelection created
+rolebinding.rbac.authorization.k8s.io/cert-manager-webhook:dynamic-serving created
+service/cert-manager created
+service/cert-manager-webhook created
+deployment.apps/cert-manager-cainjector created
+deployment.apps/cert-manager created
+deployment.apps/cert-manager-webhook created
+mutatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
+validatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
+root@debian10x64:/home/fernando#
+
+`````
+
+- Instalação  OpenTelemetry Operator:
+````bash
+kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.74.0/opentelemetry-operator.yaml
+
+
+root@debian10x64:/home/fernando# kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.74.0/opentelemetry-operator.yaml
+namespace/opentelemetry-operator-system created
+customresourcedefinition.apiextensions.k8s.io/instrumentations.opentelemetry.io created
+customresourcedefinition.apiextensions.k8s.io/opentelemetrycollectors.opentelemetry.io created
+serviceaccount/opentelemetry-operator-controller-manager created
+role.rbac.authorization.k8s.io/opentelemetry-operator-leader-election-role created
+clusterrole.rbac.authorization.k8s.io/opentelemetry-operator-manager-role created
+clusterrole.rbac.authorization.k8s.io/opentelemetry-operator-metrics-reader created
+clusterrole.rbac.authorization.k8s.io/opentelemetry-operator-proxy-role created
+rolebinding.rbac.authorization.k8s.io/opentelemetry-operator-leader-election-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/opentelemetry-operator-manager-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/opentelemetry-operator-proxy-rolebinding created
+service/opentelemetry-operator-controller-manager-metrics-service created
+service/opentelemetry-operator-webhook-service created
+deployment.apps/opentelemetry-operator-controller-manager created
+mutatingwebhookconfiguration.admissionregistration.k8s.io/opentelemetry-operator-mutating-webhook-configuration created
+validatingwebhookconfiguration.admissionregistration.k8s.io/opentelemetry-operator-validating-webhook-configuration created
+Error from server (InternalError): error when creating "https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.74.0/opentelemetry-operator.yaml": Internal error occurred: failed calling webhook "webhook.cert-manager.io": failed to call webhook: Post "https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s": dial tcp 10.107.150.215:443: connect: connection refused
+Error from server (InternalError): error when creating "https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.74.0/opentelemetry-operator.yaml": Internal error occurred: failed calling webhook "webhook.cert-manager.io": failed to call webhook: Post "https://cert-manager-webhook.cert-manager.svc:443/mutate?timeout=10s": dial tcp 10.107.150.215:443: connect: connection refused
+root@debian10x64:/home/fernando#
+
+````
+
+
+Parece que você está enfrentando um problema ao tentar instalar o OpenTelemetry Collector devido a um erro interno. O erro indica que houve uma falha ao chamar o webhook "cert-manager", resultando em uma recusa de conexão.
+
+Aqui estão algumas sugestões para resolver esse problema:
+
+    Verifique a conectividade: Certifique-se de que sua conexão de rede esteja funcionando corretamente e que você possa acessar os recursos necessários, como o serviço "cert-manager-webhook".
+
+    Verifique se o cert-manager está instalado: O cert-manager é uma ferramenta usada para automatizar a gestão de certificados TLS em um cluster Kubernetes. Certifique-se de que o cert-manager esteja instalado corretamente no seu cluster e que todos os seus componentes estejam em execução.
+
+    Verifique se há erros nos logs: Consulte os logs do cert-manager e do OpenTelemetry Operator para procurar mensagens de erro ou avisos que possam fornecer mais informações sobre o problema.
+
+    Atualize o cert-manager: Se você estiver usando uma versão antiga do cert-manager, pode ser útil atualizá-lo para a versão mais recente, pois isso pode resolver problemas conhecidos.
+
+    Verifique as políticas de rede: Certifique-se de que não há políticas de rede restritivas que estejam bloqueando a comunicação entre os componentes do seu cluster Kubernetes.
+
+Se nenhuma dessas sugestões resolver o problema, pode ser útil entrar em contato com a comunidade do OpenTelemetry ou do cert-manager para obter assistência adicional. Eles podem oferecer insights mais específicos com base no seu ambiente e na configuração do seu cluster Kubernetes.
+
+
+
+
+
+- Revisando
+
+~~~~bash
+
+root@debian10x64:/home/fernando# kubectl get all -n cert-manager
+NAME                                           READY   STATUS    RESTARTS   AGE
+pod/cert-manager-69f6576f94-287m9              1/1     Running   0          2m26s
+pod/cert-manager-cainjector-7746bc4d84-bgjml   1/1     Running   0          2m26s
+pod/cert-manager-webhook-996bcb478-bj8kp       1/1     Running   0          2m26s
+
+NAME                           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/cert-manager           ClusterIP   10.96.113.6      <none>        9402/TCP   2m26s
+service/cert-manager-webhook   ClusterIP   10.107.150.215   <none>        443/TCP    2m26s
+
+NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/cert-manager              1/1     1            1           2m26s
+deployment.apps/cert-manager-cainjector   1/1     1            1           2m26s
+deployment.apps/cert-manager-webhook      1/1     1            1           2m26s
+
+NAME                                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/cert-manager-69f6576f94              1         1         1       2m26s
+replicaset.apps/cert-manager-cainjector-7746bc4d84   1         1         1       2m26s
+replicaset.apps/cert-manager-webhook-996bcb478       1         1         1       2m26s
+root@debian10x64:/home/fernando#
+
+~~~~
+
+
+
+- Nova tentativa, sem erros
+
+~~~~bash
+
+root@debian10x64:/home/fernando# kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.74.0/opentelemetry-operator.yaml
+namespace/opentelemetry-operator-system unchanged
+customresourcedefinition.apiextensions.k8s.io/instrumentations.opentelemetry.io unchanged
+customresourcedefinition.apiextensions.k8s.io/opentelemetrycollectors.opentelemetry.io unchanged
+serviceaccount/opentelemetry-operator-controller-manager unchanged
+role.rbac.authorization.k8s.io/opentelemetry-operator-leader-election-role unchanged
+clusterrole.rbac.authorization.k8s.io/opentelemetry-operator-manager-role configured
+clusterrole.rbac.authorization.k8s.io/opentelemetry-operator-metrics-reader unchanged
+clusterrole.rbac.authorization.k8s.io/opentelemetry-operator-proxy-role unchanged
+rolebinding.rbac.authorization.k8s.io/opentelemetry-operator-leader-election-rolebinding unchanged
+clusterrolebinding.rbac.authorization.k8s.io/opentelemetry-operator-manager-rolebinding unchanged
+clusterrolebinding.rbac.authorization.k8s.io/opentelemetry-operator-proxy-rolebinding unchanged
+service/opentelemetry-operator-controller-manager-metrics-service unchanged
+service/opentelemetry-operator-webhook-service unchanged
+deployment.apps/opentelemetry-operator-controller-manager unchanged
+certificate.cert-manager.io/opentelemetry-operator-serving-cert created
+issuer.cert-manager.io/opentelemetry-operator-selfsigned-issuer created
+mutatingwebhookconfiguration.admissionregistration.k8s.io/opentelemetry-operator-mutating-webhook-configuration configured
+validatingwebhookconfiguration.admissionregistration.k8s.io/opentelemetry-operator-validating-webhook-configuration configured
+root@debian10x64:/home/fernando# date
+Sun 24 Mar 2024 06:43:34 PM -03
+root@debian10x64:/home/fernando#
+
+~~~~
+
+
+
+
+- Para verificar se a instalação do Operator ocorreu bem basta executar o seguinte comando substituindo o nome do pod `kubectl logs -n opentelemetry-operator-system opentelemetry-operator-controller-manager-7487c6674d-shpbl`: 
+
+````bash
+Defaulted container "manager" out of: manager, kube-rbac-proxy
+{"level":"info","ts":"2023-04-27T11:28:16.807422088Z","msg":"Starting the OpenTelemetry Operator","opentelemetry-operator":"0.74.0","opentelemetry-collector":"ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.74.0","opentelemetry-targetallocator":"ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:0.74.0","operator-opamp-bridge":"ghcr.io/open-telemetry/opentelemetry-operator/operator-opamp-bridge:0.74.0","auto-instrumentation-java":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.23.0","auto-instrumentation-nodejs":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.34.0","auto-instrumentation-python":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.36b0","auto-instrumentation-dotnet":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.6.0","build-date":"2023-03-29T11:22:05Z","go-version":"go1.20.2","go-arch":"arm64","go-os":"linux","labels-filter":[]}
+{"level":"info","ts":"2023-04-27T11:28:16.807667255Z","logger":"setup","msg":"the env var WATCH_NAMESPACE isn't set, watching all namespaces"}
+{"level":"info","ts":"2023-04-27T11:28:16.832493297Z","logger":"controller-runtime.metrics","msg":"Metrics server is starting to listen","addr":"127.0.0.1:8080"}
+{"level":"info","ts":"2023-04-27T11:28:16.838661213Z","logger":"controller-runtime.builder","msg":"Registering a mutating webhook","GVK":"opentelemetry.io/v1alpha1, Kind=OpenTelemetryCollector","path":"/mutate-opentelemetry-io-v1alpha1-opentelemetrycollector"}
+{"level":"info","ts":"2023-04-27T11:28:16.838714338Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/mutate-opentelemetry-io-v1alpha1-opentelemetrycollector"}
+{"level":"info","ts":"2023-04-27T11:28:16.838741547Z","logger":"controller-runtime.builder","msg":"Registering a validating webhook","GVK":"opentelemetry.io/v1alpha1, Kind=OpenTelemetryCollector","path":"/validate-opentelemetry-io-v1alpha1-opentelemetrycollector"}
+{"level":"info","ts":"2023-04-27T11:28:16.83878788Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/validate-opentelemetry-io-v1alpha1-opentelemetrycollector"}
+{"level":"info","ts":"2023-04-27T11:28:16.838815422Z","logger":"controller-runtime.builder","msg":"Registering a mutating webhook","GVK":"opentelemetry.io/v1alpha1, Kind=Instrumentation","path":"/mutate-opentelemetry-io-v1alpha1-instrumentation"}
+{"level":"info","ts":"2023-04-27T11:28:16.83883838Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/mutate-opentelemetry-io-v1alpha1-instrumentation"}
+{"level":"info","ts":"2023-04-27T11:28:16.838853838Z","logger":"controller-runtime.builder","msg":"Registering a validating webhook","GVK":"opentelemetry.io/v1alpha1, Kind=Instrumentation","path":"/validate-opentelemetry-io-v1alpha1-instrumentation"}
+{"level":"info","ts":"2023-04-27T11:28:16.838866088Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/validate-opentelemetry-io-v1alpha1-instrumentation"}
+{"level":"info","ts":"2023-04-27T11:28:16.83896938Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/mutate-v1-pod"}
+{"level":"info","ts":"2023-04-27T11:28:16.839004005Z","logger":"setup","msg":"starting manager"}
+{"level":"info","ts":"2023-04-27T11:28:16.839308422Z","msg":"Starting server","path":"/metrics","kind":"metrics","addr":"127.0.0.1:8080"}
+{"level":"info","ts":"2023-04-27T11:28:16.83936588Z","msg":"Starting server","kind":"health probe","addr":"[::]:8081"}
+{"level":"info","ts":"2023-04-27T11:28:16.839088963Z","logger":"controller-runtime.webhook.webhooks","msg":"Starting webhook server"}
+````
+
+
+
+kubectl logs -n opentelemetry-operator-system opentelemetry-operator-controller-manager-7c9d9c77fb-gzv2f
+
+
+
+
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando# kubectl get all -n opentelemetry-operator-system
+NAME                                                             READY   STATUS    RESTARTS   AGE
+pod/opentelemetry-operator-controller-manager-7c9d9c77fb-gzv2f   2/2     Running   0          5m14s
+
+NAME                                                                TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/opentelemetry-operator-controller-manager-metrics-service   ClusterIP   10.104.205.159   <none>        8443/TCP   5m14s
+service/opentelemetry-operator-webhook-service                      ClusterIP   10.111.7.82      <none>        443/TCP    5m14s
+
+NAME                                                        READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/opentelemetry-operator-controller-manager   1/1     1            1           5m14s
+
+NAME                                                                   DESIRED   CURRENT   READY   AGE
+replicaset.apps/opentelemetry-operator-controller-manager-7c9d9c77fb   1         1         1       5m14s
+root@debian10x64:/home/fernando#
+
+
+
+
+  # Return snapshot logs from pod nginx with multi containers
+  kubectl logs nginx --all-containers=true
+
+kubectl logs -n opentelemetry-operator-system opentelemetry-operator-controller-manager-7c9d9c77fb-gzv2f --all-containers=true
+
+~~~~bash
+
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando# kubectl logs -n opentelemetry-operator-system opentelemetry-operator-controller-manager-7c9d9c77fb-gzv2f --all-containers=true
+{"level":"info","ts":"2024-03-24T21:45:00.33727881Z","msg":"Starting the OpenTelemetry Operator","opentelemetry-operator":"0.74.0","opentelemetry-collector":"ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.74.0","opentelemetry-targetallocator":"ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:0.74.0","operator-opamp-bridge":"ghcr.io/open-telemetry/opentelemetry-operator/operator-opamp-bridge:0.74.0","auto-instrumentation-java":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.23.0","auto-instrumentation-nodejs":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.34.0","auto-instrumentation-python":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.36b0","auto-instrumentation-dotnet":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.6.0","build-date":"2023-03-29T11:22:05Z","go-version":"go1.20.2","go-arch":"amd64","go-os":"linux","labels-filter":[]}
+{"level":"info","ts":"2024-03-24T21:45:00.337502301Z","logger":"setup","msg":"the env var WATCH_NAMESPACE isn't set, watching all namespaces"}
+{"level":"info","ts":"2024-03-24T21:45:00.343910724Z","logger":"controller-runtime.metrics","msg":"Metrics server is starting to listen","addr":"127.0.0.1:8080"}
+{"level":"info","ts":"2024-03-24T21:45:00.348279277Z","logger":"controller-runtime.builder","msg":"Registering a mutating webhook","GVK":"opentelemetry.io/v1alpha1, Kind=OpenTelemetryCollector","path":"/mutate-opentelemetry-io-v1alpha1-opentelemetrycollector"}
+{"level":"info","ts":"2024-03-24T21:45:00.348328997Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/mutate-opentelemetry-io-v1alpha1-opentelemetrycollector"}
+{"level":"info","ts":"2024-03-24T21:45:00.348404088Z","logger":"controller-runtime.builder","msg":"Registering a validating webhook","GVK":"opentelemetry.io/v1alpha1, Kind=OpenTelemetryCollector","path":"/validate-opentelemetry-io-v1alpha1-opentelemetrycollector"}
+{"level":"info","ts":"2024-03-24T21:45:00.348437098Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/validate-opentelemetry-io-v1alpha1-opentelemetrycollector"}
+{"level":"info","ts":"2024-03-24T21:45:00.348466088Z","logger":"controller-runtime.builder","msg":"Registering a mutating webhook","GVK":"opentelemetry.io/v1alpha1, Kind=Instrumentation","path":"/mutate-opentelemetry-io-v1alpha1-instrumentation"}
+{"level":"info","ts":"2024-03-24T21:45:00.348496108Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/mutate-opentelemetry-io-v1alpha1-instrumentation"}
+{"level":"info","ts":"2024-03-24T21:45:00.348511399Z","logger":"controller-runtime.builder","msg":"Registering a validating webhook","GVK":"opentelemetry.io/v1alpha1, Kind=Instrumentation","path":"/validate-opentelemetry-io-v1alpha1-instrumentation"}
+{"level":"info","ts":"2024-03-24T21:45:00.348535479Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/validate-opentelemetry-io-v1alpha1-instrumentation"}
+{"level":"info","ts":"2024-03-24T21:45:00.348582709Z","logger":"controller-runtime.webhook","msg":"Registering webhook","path":"/mutate-v1-pod"}
+{"level":"info","ts":"2024-03-24T21:45:00.348597549Z","logger":"setup","msg":"starting manager"}
+{"level":"info","ts":"2024-03-24T21:45:00.348641949Z","logger":"controller-runtime.webhook.webhooks","msg":"Starting webhook server"}
+{"level":"info","ts":"2024-03-24T21:45:00.34873042Z","msg":"Starting server","kind":"health probe","addr":"[::]:8081"}
+{"level":"info","ts":"2024-03-24T21:45:00.34875171Z","msg":"Starting server","path":"/metrics","kind":"metrics","addr":"127.0.0.1:8080"}
+{"level":"info","ts":"2024-03-24T21:45:00.348966162Z","logger":"controller-runtime.certwatcher","msg":"Updated current TLS certificate"}
+{"level":"info","ts":"2024-03-24T21:45:00.349031502Z","logger":"controller-runtime.webhook","msg":"Serving webhook server","host":"","port":9443}
+I0324 21:45:00.348855       1 leaderelection.go:248] attempting to acquire leader lease opentelemetry-operator-system/9f7554c3.opentelemetry.io...
+{"level":"info","ts":"2024-03-24T21:45:00.349098313Z","logger":"controller-runtime.certwatcher","msg":"Starting certificate watcher"}
+I0324 21:45:00.362304       1 leaderelection.go:258] successfully acquired lease opentelemetry-operator-system/9f7554c3.opentelemetry.io
+{"level":"info","ts":"2024-03-24T21:45:00.362536943Z","logger":"instrumentation-upgrade","msg":"looking for managed Instrumentation instances to upgrade"}
+{"level":"info","ts":"2024-03-24T21:45:00.362546083Z","logger":"collector-upgrade","msg":"looking for managed instances to upgrade"}
+{"level":"info","ts":"2024-03-24T21:45:00.362703154Z","msg":"Starting EventSource","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","source":"kind source: *v1alpha1.OpenTelemetryCollector"}
+{"level":"info","ts":"2024-03-24T21:45:00.362808074Z","msg":"Starting EventSource","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","source":"kind source: *v1.ConfigMap"}
+{"level":"info","ts":"2024-03-24T21:45:00.362812594Z","msg":"Starting EventSource","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","source":"kind source: *v1.ServiceAccount"}
+{"level":"info","ts":"2024-03-24T21:45:00.362815024Z","msg":"Starting EventSource","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","source":"kind source: *v1.Service"}
+{"level":"info","ts":"2024-03-24T21:45:00.362817554Z","msg":"Starting EventSource","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","source":"kind source: *v1.Deployment"}
+{"level":"info","ts":"2024-03-24T21:45:00.362819354Z","msg":"Starting EventSource","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","source":"kind source: *v1.DaemonSet"}
+{"level":"info","ts":"2024-03-24T21:45:00.362822234Z","msg":"Starting EventSource","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","source":"kind source: *v1.StatefulSet"}
+{"level":"info","ts":"2024-03-24T21:45:00.362824555Z","msg":"Starting EventSource","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","source":"kind source: *v2.HorizontalPodAutoscaler"}
+{"level":"info","ts":"2024-03-24T21:45:00.362826625Z","msg":"Starting Controller","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector"}
+{"level":"info","ts":"2024-03-24T21:45:00.463944136Z","logger":"instrumentation-upgrade","msg":"no instances to upgrade"}
+{"level":"info","ts":"2024-03-24T21:45:00.464019237Z","logger":"collector-upgrade","msg":"no instances to upgrade"}
+{"level":"info","ts":"2024-03-24T21:45:00.464021087Z","msg":"Starting workers","controller":"opentelemetrycollector","controllerGroup":"opentelemetry.io","controllerKind":"OpenTelemetryCollector","worker count":1}
+I0324 21:45:12.931620       1 main.go:186] Valid token audiences:
+I0324 21:45:12.931914       1 main.go:316] Generating self signed cert as no cert is provided
+I0324 21:45:13.473573       1 main.go:366] Starting TCP socket on 0.0.0.0:8443
+I0324 21:45:13.473833       1 main.go:373] Listening securely on 0.0.0.0:8443
+root@debian10x64:/home/fernando# date
+Sun 24 Mar 2024 06:47:12 PM -03
+root@debian10x64:/home/fernando#
+
+~~~~
+
+
+
+
+
+
+## Deploy da instância do Collector
+- Para fazer o deploy da instância do OpenTelemetry Collector basta executar o seguinte comando: 
+
+````bash
+kubectl apply -f /home/fernando/cursos/opentelemetry/opentelemetry-with-grafana-stack/02-otel-collector.yaml
+````
+
+- Verifique se a instalação ocorreu sem erros:
+````bash
+
+root@debian10x64:/home/fernando# kubectl apply -f /home/fernando/cursos/opentelemetry/opentelemetry-with-grafana-stack/02-otel-collector.yaml
+opentelemetrycollector.opentelemetry.io/otel created
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando# kubectl get pods -n observability-backend -w
+NAME                              READY   STATUS    RESTARTS      AGE
+grafana-65888b98d-t2jbx           1/1     Running   1             4h18m
+loki-0                            1/1     Running   1             4h18m
+mimir-0                           1/1     Running   4 (26m ago)   4h18m
+otel-collector-687c7b7b8c-tspg7   1/1     Running   0             13s
+tempo-694776547f-cs2kb            1/1     Running   1             4h18m
+^Croot@debian10x64:/home/fernando#
+
+````
+
+
+
+
+
+
+## Deploy da Aplicação 
+  - Frontend - NodeJS
+  - Backend - Python
+  - Backend - Java
+
+````bash
+kubectl apply -f /home/fernando/cursos/opentelemetry/opentelemetry-with-grafana-stack/03-application.yaml
+````
+
+- Validando:
+
+~~~~bash
+
+root@debian10x64:/home/fernando# kubectl apply -f /home/fernando/cursos/opentelemetry/opentelemetry-with-grafana-stack/03-application.yaml
+namespace/tutorial-application created
+deployment.apps/backend1-deployment created
+service/backend1-service created
+deployment.apps/backend2-deployment created
+service/backend2-service created
+deployment.apps/frontend-deployment created
+service/frontend-service created
+deployment.apps/loadgen-deployment created
+root@debian10x64:/home/fernando#
+
+kubectl get all -n tutorial-application
+
+
+root@debian10x64:/home/fernando# kubectl get all -n tutorial-application
+NAME                                       READY   STATUS    RESTARTS   AGE
+pod/backend1-deployment-5dbd59965b-zwcb9   1/1     Running   0          57s
+pod/backend2-deployment-b967458c6-m9ttq    1/1     Running   0          57s
+pod/frontend-deployment-7b46648d78-ksh56   1/1     Running   0          57s
+pod/loadgen-deployment-9d9b5f668-vsspv     1/1     Running   0          57s
+
+NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/backend1-service   ClusterIP   10.99.132.166    <none>        5000/TCP   57s
+service/backend2-service   ClusterIP   10.106.35.173    <none>        5165/TCP   57s
+service/frontend-service   ClusterIP   10.109.181.224   <none>        4000/TCP   57s
+
+NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/backend1-deployment   1/1     1            1           57s
+deployment.apps/backend2-deployment   1/1     1            1           57s
+deployment.apps/frontend-deployment   1/1     1            1           57s
+deployment.apps/loadgen-deployment    1/1     1            1           57s
+
+NAME                                             DESIRED   CURRENT   READY   AGE
+replicaset.apps/backend1-deployment-5dbd59965b   1         1         1       57s
+replicaset.apps/backend2-deployment-b967458c6    1         1         1       57s
+replicaset.apps/frontend-deployment-7b46648d78   1         1         1       57s
+replicaset.apps/loadgen-deployment-9d9b5f668     1         1         1       57s
+root@debian10x64:/home/fernando#
+
+~~~~
+
+[Veja que os traces ainda não estão chegando no Grafana Tempo](http://localhost:3000/grafana/explore?orgId=1&left=%7B%22datasource%22:%22tempo%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22nativeSearch%22,%22serviceName%22:%22backend2-deployment%22%7D,%7B%22refId%22:%22B%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22traceId%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D
+)
+
+
+- Ainda sem os traces:
+<http://192.168.0.105:32626/grafana/explore?orgId=1&left=%7B%22datasource%22:%22tempo%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22nativeSearch%22,%22serviceName%22:%22backend2-deployment%22%7D,%7B%22refId%22:%22B%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22traceId%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D>
+
+
+
+
+## Aplicar o CR de Instrumentation:
+````bash
+kubectl apply -f /home/fernando/cursos/opentelemetry/opentelemetry-with-grafana-stack/04-instrumentation.yaml
+````
+
+- Verifique se o CR foi criado com sucesso `kubectl get otelinst -n tutorial-application`:
+````bash
+
+root@debian10x64:/home/fernando# kubectl apply -f /home/fernando/cursos/opentelemetry/opentelemetry-with-grafana-stack/04-instrumentation.yaml
+instrumentation.opentelemetry.io/my-instrumentation created
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando# kubectl get otelinst -n tutorial-application
+NAME                 AGE   ENDPOINT                                                             SAMPLER                    SAMPLER ARG
+my-instrumentation   10s   http://otel-collector.observability-backend.svc.cluster.local:4317   parentbased_traceidratio   1
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando# date
+Sun 24 Mar 2024 07:07:08 PM -03
+root@debian10x64:/home/fernando#
+
+````
+
+
+
+
+
+## Patch do Frontend:
+- Para finalizar a auto-instrumentação precisamos fazer o patch do frontend:
+````batch
+kubectl patch deployment frontend-deployment -n tutorial-application -p '{"spec": {"template":{"metadata":{"annotations":{"instrumentation.opentelemetry.io/inject-sdk":"true"}}}} }'
+````
+
+## Após o Patch realizado vamos fazer o rollout das apps: 
+````bash
+kubectl rollout restart deployment -n tutorial-application -l app=backend1
+kubectl rollout restart deployment -n tutorial-application -l app=backend2
+kubectl rollout restart deployment -n tutorial-application -l app=frontend
+
+````
+
+[Veja que os traces AGORA estão chegando no Grafana Tempo](http://localhost:3000/grafana/explore?orgId=1&left=%7B%22datasource%22:%22tempo%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22nativeSearch%22,%22serviceName%22:%22backend2-deployment%22%7D,%7B%22refId%22:%22B%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22traceId%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D
+)
+
+
+
+- ERRO
+
+root@debian10x64:/home/fernando# kubectl rollout restart deployment -n tutorial-application -l app=backend1
+error: unknown shorthand flag: 'l' in -l
+See 'kubectl rollout restart --help' for usage.
+
+
+
+root@debian10x64:/home/fernando# kubectl get deployment -n tutorial-application
+NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
+backend1-deployment   1/1     1            1           20m
+backend2-deployment   1/1     1            1           20m
+frontend-deployment   1/1     1            1           20m
+loadgen-deployment    1/1     1            1           20m
+root@debian10x64:/home/fernando#
+
+
+
+````bash
+kubectl rollout restart deployment -n tutorial-application backend1-deployment
+kubectl rollout restart deployment -n tutorial-application backend2-deployment
+kubectl rollout restart deployment -n tutorial-application frontend-deployment
+
+````
+
+
+
+
+OpenTelemetry - NodeJS Trace

@@ -36,9 +36,10 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 ````bash
 kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.74.0/opentelemetry-operator.yaml
 ````
- - Para verificar se a instalação do Operator ocorreu bem basta executar o seguinte comando substituindo o nome do pod `kubectl logs -n opentelemetry-operator-system opentelemetry-operator-controller-manager-7487c6674d-shpbl`: 
 
- ````bash
+- Para verificar se a instalação do Operator ocorreu bem basta executar o seguinte comando substituindo o nome do pod `kubectl logs -n opentelemetry-operator-system opentelemetry-operator-controller-manager-7487c6674d-shpbl`: 
+
+````bash
 Defaulted container "manager" out of: manager, kube-rbac-proxy
 {"level":"info","ts":"2023-04-27T11:28:16.807422088Z","msg":"Starting the OpenTelemetry Operator","opentelemetry-operator":"0.74.0","opentelemetry-collector":"ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.74.0","opentelemetry-targetallocator":"ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:0.74.0","operator-opamp-bridge":"ghcr.io/open-telemetry/opentelemetry-operator/operator-opamp-bridge:0.74.0","auto-instrumentation-java":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.23.0","auto-instrumentation-nodejs":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.34.0","auto-instrumentation-python":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.36b0","auto-instrumentation-dotnet":"ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.6.0","build-date":"2023-03-29T11:22:05Z","go-version":"go1.20.2","go-arch":"arm64","go-os":"linux","labels-filter":[]}
 {"level":"info","ts":"2023-04-27T11:28:16.807667255Z","logger":"setup","msg":"the env var WATCH_NAMESPACE isn't set, watching all namespaces"}
@@ -56,7 +57,7 @@ Defaulted container "manager" out of: manager, kube-rbac-proxy
 {"level":"info","ts":"2023-04-27T11:28:16.839308422Z","msg":"Starting server","path":"/metrics","kind":"metrics","addr":"127.0.0.1:8080"}
 {"level":"info","ts":"2023-04-27T11:28:16.83936588Z","msg":"Starting server","kind":"health probe","addr":"[::]:8081"}
 {"level":"info","ts":"2023-04-27T11:28:16.839088963Z","logger":"controller-runtime.webhook.webhooks","msg":"Starting webhook server"}
- ````
+````
 
 
 ## Deploy da instância do Collector
@@ -108,9 +109,9 @@ kubectl patch deployment frontend-deployment -n tutorial-application -p '{"spec"
 
 ## Após o Patch realizado vamos fazer o rollout das apps: 
 ````bash
-kubectl rollout restart deployment -n tutorial-application -l app=backend1
-kubectl rollout restart deployment -n tutorial-application -l app=backend2
-kubectl rollout restart deployment -n tutorial-application -l app=frontend
+kubectl rollout restart deployment -n tutorial-application backend1-deployment
+kubectl rollout restart deployment -n tutorial-application backend2-deployment
+kubectl rollout restart deployment -n tutorial-application frontend-deployment
 
 ````
 
