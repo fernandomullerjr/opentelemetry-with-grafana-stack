@@ -116,3 +116,10 @@ kubectl rollout restart deployment -n tutorial-application -l app=frontend
 
 [Veja que os traces AGORA estão chegando no Grafana Tempo](http://localhost:3000/grafana/explore?orgId=1&left=%7B%22datasource%22:%22tempo%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22nativeSearch%22,%22serviceName%22:%22backend2-deployment%22%7D,%7B%22refId%22:%22B%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22traceId%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D
 )
+
+
+
+## Fonte
+
+Repositório original:
+<https://github.com/yuriolisa/pes-2023-opentelemetry>

@@ -1344,3 +1344,88 @@ root@debian10x64:/home/fernando#
 - TSHOOT, Grafana abrir via browser local o mesmo que o VM.
       Avaliar ngrok.
 - Subir stack do projeto PES - OpenTelemetry. Demais manifestos.
+
+
+
+
+
+
+
+- TSHOOT, Grafana abrir via browser local o mesmo que o VM.
+      Avaliar ngrok.
+
+
+- Idéia
+<https://stackoverflow.com/questions/42487945/kubernetes-services-to-be-exposed-to-local-machine>
+
+- Ajustando para NodePort os Services:
+opentelemetry-with-grafana-stack/01-backend.yaml
+type: NodePort
+
+
+
+- ANTES
+
+~~~~bash
+root@debian10x64:/home/fernando# kubectl get svc -A
+NAMESPACE               NAME          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                              AGE
+default                 kubernetes    ClusterIP   10.96.0.1        <none>        443/TCP                              28d
+kube-system             hubble-peer   ClusterIP   10.100.246.65    <none>        443/TCP                              20h
+kube-system             kube-dns      ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP               28d
+observability-backend   grafana       ClusterIP   10.107.243.249   <none>        3000/TCP,80/TCP                      4h1m
+observability-backend   loki          ClusterIP   10.99.170.125    <none>        3100/TCP                             4h1m
+observability-backend   mimir         ClusterIP   10.97.133.159    <none>        8080/TCP,80/TCP,9095/TCP             4h1m
+observability-backend   tempo         ClusterIP   10.104.229.99    <none>        3200/TCP,55680/TCP,80/TCP,6831/UDP   4h1m
+root@debian10x64:/home/fernando#
+root@debian10x64:/home/fernando#
+~~~~
+
+- Ajustando
+
+~~~~bash
+root@debian10x64:/home/fernando# kubectl apply -f /home/fernando/cursos/opentelemetry/opentelemetry-with-grafana-stack/01-backend.yaml
+namespace/observability-backend unchanged
+secret/loki-config unchanged
+storageclass.storage.k8s.io/local-storage unchanged
+persistentvolume/local-pv unchanged
+persistentvolume/local-pv-2 unchanged
+service/loki configured
+statefulset.apps/loki configured
+configmap/tempo unchanged
+service/tempo configured
+deployment.apps/tempo configured
+configmap/mimir unchanged
+service/mimir configured
+statefulset.apps/mimir configured
+configmap/dashboards-demo-0 configured
+configmap/grafana-config unchanged
+configmap/grafana-dashboard-provisioning unchanged
+configmap/grafana-dashboards unchanged
+configmap/grafana-dashboards-demo unchanged
+configmap/grafana-datasources configured
+configmap/grafana-notification-channels configured
+service/grafana configured
+deployment.apps/grafana unchanged
+root@debian10x64:/home/fernando#
+~~~~
+
+
+- DEPOIS
+
+~~~~bash
+root@debian10x64:/home/fernando# kubectl get svc -A
+NAMESPACE               NAME          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                      AGE
+default                 kubernetes    ClusterIP   10.96.0.1        <none>        443/TCP                                                      28d
+kube-system             hubble-peer   ClusterIP   10.100.246.65    <none>        443/TCP                                                      20h
+kube-system             kube-dns      ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP                                       28d
+observability-backend   grafana       NodePort    10.107.243.249   <none>        3000:32626/TCP,80:32418/TCP                                  4h7m
+observability-backend   loki          NodePort    10.99.170.125    <none>        3100:31003/TCP                                               4h7m
+observability-backend   mimir         NodePort    10.97.133.159    <none>        8080:32335/TCP,80:31226/TCP,9095:30948/TCP                   4h7m
+observability-backend   tempo         NodePort    10.104.229.99    <none>        3200:32576/TCP,55680:32597/TCP,80:31765/TCP,6831:32088/UDP   4h7m
+root@debian10x64:/home/fernando#
+~~~~
+
+
+
+- Grafana acessivel via:
+<http://192.168.0.105:32626/grafana/?orgId=1>

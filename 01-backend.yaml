@@ -76,6 +76,7 @@ spec:
   - name: loki-http-metrics
     port: 3100
     targetPort: 3100
+  type: NodePort
   selector:
     name: loki
 ---
@@ -204,6 +205,7 @@ spec:
     port: 6831
     protocol: UDP
     targetPort: 6831
+  type: NodePort
   selector:
     app: tempo
     name: tempo
@@ -298,6 +300,7 @@ spec:
   - name: grpc
     port: 9095
     targetPort: 9095
+  type: NodePort
   selector:
     app: mimir
     name: mimir
@@ -5054,6 +5057,7 @@ spec:
   - name: http
     port: 80
     targetPort: 3000
+  type: NodePort
   selector:
     name: grafana
 ---
